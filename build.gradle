@@ -1,16 +1,52 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        applicationId "com.zombiegame"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        // Только armeabi-v7a — Mi Pad 1 (Tegra K1)
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++17 -O2 -ffast-math"
+                arguments "-DANDROID_STL=c++_static",
+                          "-DANDROID_ARM_NEON=TRUE"
+            }
+        }
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "../../CMakeLists.txt"
+            version "3.18.1"
+        }
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java']
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            res.srcDirs = ['src/main/res']
+        }
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+dependencies {
+    // Нет зависимостей — чистый нативный
 }
